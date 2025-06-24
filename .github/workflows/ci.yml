@@ -24,6 +24,10 @@ jobs:
     #   with:
     #     name: twesterhout
     #     authToken: '${{ secrets.CACHIX_AUTH_TOKEN }}'
-    - name: Build
+    - name: Build nvim
       run: |
-        nix build --accept-flake-config -L .
+        nix build --accept-flake-config -L .#nvim
+    - name: Build AppImage
+      if: runner.os == 'Linux'
+      run: |
+        nix build --accept-flake-config -L .#default
