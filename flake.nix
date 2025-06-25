@@ -1,7 +1,7 @@
 {
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    nixpkgsOld.url = "github:nixos/nixpkgs/70bdadeb94ffc8806c0570eb5c2695ad29f0e421";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    nixpkgsOld.url = "github:NixOS/nixpkgs/70bdadeb94ffc8806c0570eb5c2695ad29f0e421";
     nix-appimage = {
       url = "github:ralismark/nix-appimage";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -22,28 +22,18 @@
           ];
           customConfig = (pkgs.runCommand "custom-config" { } (''
             mkdir -p $out/{after/ftplugin,lsp,parser,queries}
-            install -m644 ${./init.lua} $out
-            find ${./after/ftplugin} -name '*.lua' -exec install -m644 '{}' $out/after/ftplugin \;
-            find ${./lsp} -name '*.lua' -exec install -m644 '{}' $out/lsp \;
+            find ${./after/ftplugin} -name '*.lua' -exec install -v -m644 '{}' $out/after/ftplugin \;
+            find ${./lsp} -name '*.lua' -exec install -v -m644 '{}' $out/lsp \;
 
             install-treesitter-grammar() {
               origGrammar="$1"
               grammarName="$2"
-              installQueries="$3"
-
+              mkdir -p "$out/queries/$grammarName"
               install -m644 "$origGrammar/parser" "$out/parser/$grammarName.so"
-              if [ "$installQueries" == 1 ]; then
-                mkdir -p "$out/queries/$grammarName"
-                if [ -d "$origGrammar/queries/$grammarName" ]; then
-                  origQueries="$origGrammar/queries/$grammarName"
-                else
-                  origQueries="$origGrammar/queries"
-                fi
-                find "$origQueries" -type f -exec install -m644 '{}' $out/queries/$grammarName/ \;
-              fi
+              find "${pkgs.vimPlugins.nvim-treesitter}/queries/$grammarName" -name '*.scm' -exec install -v -m644 '{}' $out/queries/$grammarName/ \;
             }
             ''
-            + concatStringsSep "\n" (map (g: "install-treesitter-grammar ${g} ${grammarName g} 1") grammars)
+            + concatStringsSep "\n" (map (g: "install-treesitter-grammar ${g} ${grammarName g}") grammars)
             + ''
 
             '')
@@ -51,12 +41,15 @@
         in pkgs.wrapNeovimUnstable pkgs.neovim-unwrapped {
           extraName = "-custom";
           autoconfigure = false;
-          autowrapRuntimeDeps = false;
+          autowrapRuntimeDeps = true;
           withPython3 = false;
           withNodeJs = false;
           withPerl = false;
           withRuby = false;
-          plugins = with pkgs.vimPlugins; [ customConfig catppuccin-nvim mini-icons fzf-lua haskell-tools-nvim ];
+          luaRcContent = readFile ./init.lua;
+          plugins = with pkgs.vimPlugins; [
+            customConfig catppuccin-nvim mini-icons fzf-lua haskell-tools-nvim
+          ];
         };
     in
     {

@@ -50,9 +50,6 @@ vim.api.nvim_create_autocmd("FileType", {
 })
 vim.cmd("syntax off") -- disable builtin syntax highlighting
 
--- plugins
-vim.opt.packpath:prepend("/home/twesterhout2/.config/nvim/pack")
-
 require("mini.icons").setup({ style = "ascii", })
 
 local fzf = require("fzf-lua")
