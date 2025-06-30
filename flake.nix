@@ -16,10 +16,7 @@
       mkNeovim = with builtins; pkgs:
         let
           grammarName = with lib; g: pipe g [ getName (removeSuffix "-grammar") (removePrefix "tree-sitter-") (replaceStrings [ "-" ] [ "_" ]) ];
-          grammars = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [
-            nix python
-            inputs.nixpkgsOld.legacyPackages.${pkgs.targetPlatform.system}.vimPlugins.nvim-treesitter.builtGrammars.haskell
-          ];
+          grammars = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [ nix python ];
           customConfig = (pkgs.runCommand "custom-config" { } (''
             mkdir -p $out/{after/ftplugin,lsp,parser,queries}
             find ${./after/ftplugin} -name '*.lua' -exec install -v -m644 '{}' $out/after/ftplugin \;
@@ -33,9 +30,11 @@
               find "${pkgs.vimPlugins.nvim-treesitter}/queries/$grammarName" -name '*.scm' -exec install -v -m644 '{}' $out/queries/$grammarName/ \;
             }
             ''
-            + concatStringsSep "\n" (map (g: "install-treesitter-grammar ${g} ${grammarName g}") grammars)
+            + concatStringsSep "\n" (map (g: "install-treesitter-grammar ${g} ${grammarName g}") grammars) + "\n"
             + ''
-
+              mkdir -p "$out/queries/haskell"
+              install -m644 "${inputs.nixpkgsOld.legacyPackages.${pkgs.system}.vimPlugins.nvim-treesitter.builtGrammars.haskell}/parser" "$out/parser/haskell.so"
+              find "${inputs.nixpkgsOld.legacyPackages.${pkgs.system}.vimPlugins.nvim-treesitter}/queries/haskell" -name '*.scm' -exec install -v -m644 '{}' $out/queries/haskell/ \;
             '')
           ) // { pname = "custom-config-plugin"; };
         in pkgs.wrapNeovimUnstable pkgs.neovim-unwrapped {
