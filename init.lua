@@ -59,6 +59,7 @@ fzf.setup({
 vim.keymap.set('n', '<leader>f', fzf.files, { desc = "Search [f]iles" })
 vim.keymap.set('n', '<leader><leader>', fzf.buffers, { desc = "Seach buffers" })
 vim.keymap.set('n', '<leader>sk', fzf.keymaps, { desc = '[S]earch [k]eymaps' })
+vim.keymap.set('n', '<leader>/', fzf.live_grep_native, { desc = 'Search by grep' })
 
 vim.api.nvim_create_autocmd("LspAttach", {
     group = vim.api.nvim_create_augroup("UserLspAttach", { clear = true }),
