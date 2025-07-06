@@ -16,7 +16,7 @@
       mkNeovim = with builtins; pkgs:
         let
           grammarName = with lib; g: pipe g [ getName (removeSuffix "-grammar") (removePrefix "tree-sitter-") (replaceStrings [ "-" ] [ "_" ]) ];
-          grammars = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [ nix python ];
+          grammars = with pkgs.vimPlugins.nvim-treesitter.builtGrammars; [ cpp nix python ];
           customConfig = (pkgs.runCommand "custom-config" { } (''
             mkdir -p $out/{after/ftplugin,lsp,parser,queries}
             find ${./after/ftplugin} -name '*.lua' -exec install -v -m644 '{}' $out/after/ftplugin \;
