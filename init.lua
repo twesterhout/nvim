@@ -53,13 +53,15 @@ vim.cmd("syntax off") -- disable builtin syntax highlighting
 require("mini.icons").setup({ style = "ascii", })
 
 local fzf = require("fzf-lua")
-fzf.setup({
-  fzf_colors = true,
-})
+fzf.setup({ fzf_colors = true, })
 vim.keymap.set('n', '<leader>f', fzf.files, { desc = "Search [f]iles" })
 vim.keymap.set('n', '<leader><leader>', fzf.buffers, { desc = "Seach buffers" })
 vim.keymap.set('n', '<leader>sk', fzf.keymaps, { desc = '[S]earch [k]eymaps' })
 vim.keymap.set('n', '<leader>/', fzf.live_grep_native, { desc = 'Search by grep' })
+
+require("repl").setup({ open_window_default = "belowright vnew", })
+vim.keymap.set('n', '<leader>r', "<Cmd>execute 'set operatorfunc=repl#noop'<CR><Cmd>call repl#sendline()<CR>g@l<Cmd>execute 'set operatorfunc=repl#sendline'<CR>", { desc = "Send line to [R]EPL" })
+vim.keymap.set('v', '<leader>r', "<Cmd>execute 'set operatorfunc=repl#noop'<CR>:<C-u>call repl#sendvisual(visualmode())<CR>g@l<Cmd>execute 'set operatorfunc=repl#sendline'<CR>", { desc = "Send selection to [R]EPL" })
 
 vim.api.nvim_create_autocmd("LspAttach", {
     group = vim.api.nvim_create_augroup("UserLspAttach", { clear = true }),

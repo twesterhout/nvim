@@ -48,6 +48,15 @@
           luaRcContent = readFile ./init.lua;
           plugins = with pkgs.vimPlugins; [
             customConfig catppuccin-nvim mini-icons fzf-lua haskell-tools-nvim
+            (pkgs.vimUtils.buildVimPlugin {
+              name = "nvim-repl";
+              src = pkgs.fetchFromGitHub {
+                owner = "pappasam";
+                repo = "nvim-repl";
+                rev = "b2dc92607fd6d1833b9c2bd916eeedcb04cad7de";
+                hash = "sha256-S19JUbE9mX93lbh5Co/Vd196kk+APR6zheIaHq6WdMU=";
+              };
+            })
           ];
         };
     in
