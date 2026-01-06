@@ -70,9 +70,10 @@ vim.api.nvim_create_autocmd("LspAttach", {
         vim.keymap.set({'n', 'x'}, "<leader>ca", function() fzf.lsp_code_actions({silent = true}) end, { desc = "LSP: [C]ode [A]ction" })
         vim.keymap.set('n', '<space>cl', vim.lsp.codelens.run, { desc = "LSP: [C]ode [L]ens run" })
         vim.keymap.set('n', 'gd', vim.lsp.buf.definition, { desc = "LSP: [G]o to [D]efinition" })
-        -- vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, { desc = "LSP: Hover" })
+        vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, { desc = "LSP: Hover" })
     end,
 })
+if vim.fn.executable('ty') then vim.lsp.enable('ty') end
 
 -- movements in the terminal
 vim.keymap.set('t', '<esc>', '<c-\\><c-n>', { desc = "Making <esc> work in the terminal" })

@@ -27,7 +27,7 @@
               grammarName="$2"
               mkdir -p "$out/queries/$grammarName"
               install -m644 "$origGrammar/parser" "$out/parser/$grammarName.so"
-              find "${pkgs.vimPlugins.nvim-treesitter}/queries/$grammarName" -name '*.scm' -exec install -v -m644 '{}' $out/queries/$grammarName/ \;
+              find "${pkgs.vimPlugins.nvim-treesitter}/runtime/queries/$grammarName" -name '*.scm' -exec install -v -m644 '{}' $out/queries/$grammarName/ \;
             }
             ''
             + concatStringsSep "\n" (map (g: "install-treesitter-grammar ${g} ${grammarName g}") grammars) + "\n"
@@ -65,5 +65,7 @@
         nvim = mkNeovim pkgs;
         default = inputs.nix-appimage.lib.${system}.mkAppImage { program = lib.getExe nvim; };
       });
+      legacyPackages = forEachSystem (_: pkgs: pkgs);
+      formatter = forEachSystem (_: pkgs: pkgs.nixpkgs-fmt);
     };
 }
